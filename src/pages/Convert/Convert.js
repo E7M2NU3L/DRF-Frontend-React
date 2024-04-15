@@ -1,8 +1,40 @@
 import { TextField } from '@mui/material'
+import axios from 'axios';
 import React from 'react'
-import { lightGreen } from '@mui/material/colors'
+import { Link } from 'react-router-dom'
 
 const Convert = () => {
+  const [fileName, setFileName] = React.useState("");
+  const [File, SetFile] = React.useState(null);
+
+  const handleFileName = (e) => setFileName(e.target.value); 
+  const handleFile = (e) => SetFile(e.target.files[0]);
+
+  const handleSubmit = async(e) => {
+    e.preventDefaults();
+
+    const form = new FormData();
+    form.append("file", File);
+    form.append("name", fileName);
+
+    const endpoint = "http://localhost:8000/api/converter/image_upload/"
+    try {
+      const response = await axios.post(
+        endpoint, {
+          file: File,
+          name: fileName
+        },{
+          headers: {
+            'Content-Type':'multipart/form-data'
+          }
+        }
+      )
+      console.log(response);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
     <main class="container-fluid" style={{
         margin: 0,
@@ -45,16 +77,16 @@ const Convert = () => {
 
               <TextField id="outlined-basic" label="File Name" variant="filled" color= 'secondary' sx={{
                 borderRadius: 4,
-              }} />
+              }} value={fileName} onChange={setFileName} />
               <span class='form-text text-muted'><small class='text-white'>Required</small></span>
               <br />
-              <input type='file' name='classify-image' className='d-flex w-100 h-100 py-2 justify-content-center align-items-center' />
+              <input type='file' name='classify-image' value={File} onChange={SetFile} className='d-flex w-100 h-100 py-2 justify-content-center align-items-center' />
               <span class='form-text text-muted'><small class='text-white'>Required</small></span><br /><hr /><h3>Points to Notice</h3><br /><ul><li>The Dicom file must be uncorrupted, proper image acquisition</li><br /><li>The image file must be less than 2 MB</li><li>Click the submit button to upload</li><li>Keep a unique name for the Image or File e.g. patient_00_123 etc.,</li></ul>
               <br />
                 
-              <a type="submit" href="{% url 'classified_output' %}" class="border-0 rounded-md shadow-sm btn btn-success">
+              <Link type="submit" to="/api/v1/tool/kidney-converted" className="border-0 rounded-md shadow-sm btn btn-success">
                 Validate
-              </a>
+              </Link>
             </form>
     </div>
   </main>

@@ -4,7 +4,9 @@ import CardSection from '../../components/HomeComponents/CardSection'
 
 const Home = () => {
   return (
-    <div>
+    <div style={{
+      background: "#fefedf"
+    }}>
         <Hero />
         <CardSection />
     </div>

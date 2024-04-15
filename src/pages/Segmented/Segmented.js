@@ -1,37 +1,63 @@
 import React from 'react'
+import SegmentedOutput from '../../components/SegmentComponents/SegmentedOutput'
+import ImageMoments from '../../components/SegmentComponents/ImageMoments'
+import ImageAnalytics from '../../components/SegmentComponents/ImageAnalytics'
+import ExtraParams from '../../components/SegmentComponents/ExtraParams'
+import RfParams from '../../components/SegmentComponents/RfParams'
+import axios from 'axios'
+import LoaderAnimation from '../../components/SegmentComponents/utils/LoaderAnimation2';
 
 const Segmented = () => {
+  const [loader, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    try {
+      const endpoint = "http://localhost:8000/api/segmenter/image_segment/"
+      const response = axios.get(endpoint, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      })
+      console.log(response);
+      refetch();
+      setLoading(false);
+    } catch (error) {
+      console.log(error.message);
+      setLoading(true);
+    }
+  }, [])
+  
+  const refetch = async () => {
+    try {
+      const endpoint = "http://localhost:8000/api/segmenter/image_segment/"
+      const response = axios.get(endpoint, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      })
+      console.log(response);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return (
-    <div class="main d-flex justify-content-center align-items-center bg-secondary-subtle" style={{width: "100%", minHeight: "100vh"}}>
-        <div class="container py-4 px-4 mx-4" style={{backgroundColor: "rgba(0,0,0,0.5)"}}>
-          
-          <h1 class="text-white font-monospace">
-            Segmented Output
-          </h1>
-          <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laborum dignissimos in, culpa harum aliquid provident ut hic autem corporis. Esse repudiandae quo nobis saepe distinctio beatae repellendus, animi facilis maiores?
-          </p>
-          <div class="row">
-            <div class="col text-white">
-              <h2>Input Feeded Image</h2>
-              <img src="{{image}}" alt="input" class="img-thumbnail shadow-lg" />
-              <button class="btn btn-warning">
-                <a class="text-decoration-none text-black fw-bold link-offset-2-hover" href="{{mask}}">Download</a>
-              </button>
-            </div>
-            <div class="col text-white">
-              <h2>
-                Segmented Mask
-              </h2>
-              <img src="{{mask}}" alt="output" class="img-thumbnail shadow-lg" />
-              <button class="btn btn-info">
-                <a class="text-decoration-none text-black fw-bold link-offset-2-hover" href="{{mask}}">Download</a>
-              </button>
-            </div>
-          </div>
-          
-        </div>
-      </div>
+    <>
+      {loader ? (
+        <React.Fragment>
+          <LoaderAnimation />
+        </React.Fragment>
+      ) : (
+        <main style={{
+          backgroundColor: "#fefedf"
+        }}>
+          <SegmentedOutput />
+          <ImageMoments />
+          <ImageAnalytics />
+          <ExtraParams />
+          <RfParams />
+        </main>
+      )}
+    </>
   )
 }
 

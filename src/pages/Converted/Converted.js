@@ -1,38 +1,56 @@
 import React from 'react'
+import LoaderLayout from '../../components/ConvertComponents/LoaderLayout';
+import OutputCards from '../../components/ConvertComponents/OutputCards';
+import PathDisplay from '../../components/ConvertComponents/PathDisplay';
+import axios from 'axios';
 
 const Converted = () => {
+
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(() => {
+    try {  
+      const endpoint = "http://localhost:8000/api/converter/image_upload/"
+      const response = axios.get(endpoint, {
+        headers: {
+          'Content-Type':'multipart/form-data'
+        }
+      });
+      console.log(response);
+      refetch();
+      setLoading(false); 
+    } catch (error) {
+      console.log(error.message);
+      setLoading(false);
+    }
+  }, [])
+
+  const refetch = async() => {
+    try {  
+      const endpoint = "http://localhost:8000/api/converter/image_upload/"
+      const response = await axios.get(endpoint, {
+        headers: {
+          'Content-Type':'multipart/form-data'
+        }
+      });
+      console.log(response); 
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
-    <main class="d-flex justify-content-center items-center w-100 min-vh-100" style={{maxHeight: "100%"}}>
-    <h1>
-        Kindly Wait <span class="text-primary">Processing</span>and Converting<span class="text-success">The given nifti [.nii.gz] File</span>
-    </h1>
-    <div class="">
-        <div class="spinner-grow text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-secondary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-success" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-danger" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-warning" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-info" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <div class="spinner-grow text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-    </div>
-</main>
+    <>
+      {false ? (
+        <React.Fragment>
+          <LoaderLayout />
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <OutputCards />
+          <PathDisplay />
+        </React.Fragment>
+      )}
+    </>
   )
 }
 

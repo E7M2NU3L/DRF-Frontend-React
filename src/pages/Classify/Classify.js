@@ -1,8 +1,47 @@
-import { TextField } from '@mui/material'
 import React from 'react'
-import { lightGreen } from '@mui/material/colors'
+import { Link } from 'react-router-dom'
+import './main.css'
+import axios from 'axios'
 
 const Convert = () => {
+  // States
+  const [fileName, setFileName] = React.useState("");
+  const [file, SetFile] = React.useState("");
+
+  // handle FileName
+  const handleFileName = (e) => setFileName(e.target.value);
+  // handle File
+  const handleFile = (e) => SetFile(e.target.files[0]);
+  
+  // handle Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+    // formData.append("fileName", fileName);
+    const endpoint = "http://localhost:8000/api/classifier/result-get/"
+    try {
+      const response = await axios.post(endpoint , {
+        file: file,
+      }, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+
+    fetch(endpoint, {
+      method: "POST",
+      body: formData,
+    })
+     .then((res) => res.json())
+     .then((res) => {
+        console.log(res);
+      });
+  };
   return (
     <main class="container-fluid" style={{
         margin: 0,
@@ -43,18 +82,16 @@ const Convert = () => {
             }}>
               <div class="mb-3"></div>
 
-              <TextField id="outlined-basic" label="File Name" variant="filled" color= 'secondary' sx={{
-                borderRadius: 4,
-              }} />
+              <input type='text'  placeholder = "Name the File" className='input-feld-classify' value={fileName} onChange={handleFileName} />
               <span class='form-text text-muted'><small class='text-white'>Required</small></span>
               <br />
-              <input type='file' name='classify-image' className='d-flex w-100 h-100 py-2 justify-content-center align-items-center' />
+              <input type='file' name='classify-image' value={file} onChange={handleFile} className='d-flex w-100 h-100 py-2 justify-content-center align-items-center' />
               <span class='form-text text-muted'><small class='text-white'>Required</small></span><br /><hr /><h3>Points to Notice</h3><br /><ul><li>The Dicom img must be uncorrupted, proper image acquisition</li><br /><li>The image img must be less than 2 MB</li><li>Click the submit button to upload</li><li>Keep a unique name for the Image or File e.g. patient_00_123 etc.,</li></ul>
               <br />
                 
-              <a type="submit" href="{% url 'classified_output' %}" class="border-0 rounded-md shadow-sm btn btn-success">
+              <Link type="submit" to="/api/v1/tool/kidney-classified" class="border-0 rounded-md shadow-sm btn btn-success">
                 Validate
-              </a>
+              </Link>
             </form>
     </div>
   </main>

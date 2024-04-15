@@ -9,6 +9,8 @@ import Converted from './pages/Converted/Converted';
 import NavUtil from './utils/Navbar/NavUtil';
 import FooterUtil from './utils/Footer/FooterUtil';
 import ProjectReport from './pages/ProjectReport/ProjectReport';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
 
 function App() {
   return (
@@ -30,11 +32,12 @@ function App() {
         <Route path='/api/v1/tool/kidney-convert' element={<Convert />} />
         <Route path='/api/v1/tool/kidney-converted' element={<Converted />} />
 
-        {/* */}
+        {/* Project Report Routes */}
         <Route path='/api/v1/tool/kidney-project' element={<ProjectReport />} />
 
-        {/* */}
-        <Route path='' />
+        {/* Auth Routes */}
+        <Route path='/api/v1/users/login' element={<Login />} />
+        <Route path='/api/v1/users/register' element={<Register />} />
       </Routes>
 
       <FooterUtil />

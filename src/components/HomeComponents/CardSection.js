@@ -19,7 +19,8 @@ const CardSection = () => {
             gap: "2rem"
         }}>
             <div class="card" style={{
-                width: "18rem"
+                width: "18rem", 
+                backgroundImage: "linear-gradient(to right top, #b39cd0, #ab5aac)"
             }}>
                 <img src={Card1Image} class="card-img-top" alt="..." />
                 <div class="card-body">
@@ -32,7 +33,8 @@ const CardSection = () => {
             </div>
 
             <div class="card" style={{
-                width: "18rem"
+                width: "18rem",
+                backgroundImage: "linear-gradient(to right top, #b39cd0, #ab5aac)"
             }}>
                 <img src={Card2Image} class="card-img-top img-thumbnail" alt="..." />
                 <div class="card-body">
@@ -45,7 +47,8 @@ const CardSection = () => {
             </div>
 
             <div class="card" style={{
-                width: "18rem"
+                width: "18rem",
+                backgroundImage: "linear-gradient(to right top, #b39cd0, #ab5aac)"
             }}>
                 <img src={Card3Image}class="card-img-top img-thumbnail" alt="..." />
                 <div class="card-body">
