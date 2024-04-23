@@ -1,77 +1,202 @@
-import { Container, Stack, Typography } from '@mui/material'
-import React from 'react'
-import Chart from 'react-apexcharts'
+import React, { useEffect, useState } from 'react';
+import { Container, Stack, Typography } from '@mui/material';
+import Chart from 'react-apexcharts';
+import LoaderAnimation from './LoaderAnimation';
 
-const RfParams = () => {
-  const [options, setOptions] = React.useState({
-    options: {
-     
-      colors: ['#66DA26', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "test image flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "test img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
-  })
-  return (
-    <>
-      <Container>
-      <Typography variant='h4' color="secondary" sx={{
-            textAlign: "center",
-            paddingTop: "20px",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px"
-          }}>
-            Machine Learning Based Analysis
-          </Typography>
-        <Stack direction="row" rowGap={2} >
-          <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-            <Typography variant='h6' color="secondary">
-              Feature Importtances of RF Classifier
-            </Typography>
-            <Chart
-              options={options.options}
-              series={options.series}
-              type="area"
-              width="400"
-            />
-          </div>
-          <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-            <Typography variant='h6' color="secondary">
-              Estimator Importances of RF Classifier
-            </Typography>
-            <Chart
-              options={options.options}
-              series={options.series}
-              type="area"
-              width="400"
-            />
-          </div>   
-        </Stack>
-      </Container>
-    </>
-  )
-}
+const RfParams = ({ data }) => {
+    // Initialize state for chart options and data
+    const [chartData, setChartData] = useState({
+        categories: [],
+        featureImportance: []
+    });
 
-export default RfParams
+    const [loading, setLoading] = useState(true);
+
+    // Function to update data
+    const updateData = () => {
+        // Parse the feature_importance data from JSON string
+        const featureImportance = JSON.parse(data.random_forest_analytics.feature_importance);
+
+        // Generate categories (feature indices) based on feature_importance length
+        const categories = Array.from({ length: featureImportance.length }, (_, index) => `Feature ${index + 1}`);
+
+        // Update chart data state
+        setChartData({
+            categories,
+            featureImportance
+        });
+
+        setLoading(false);
+    };
+
+    // Use effect to update data on component mount
+    useEffect(() => {
+        try {
+            updateData();
+        } catch (err) {
+            console.log(err);
+            setLoading(true);
+        }
+    }, []);
+
+    // Render the component
+    return (
+        <>
+            {loading ? (
+                <LoaderAnimation />
+            ) : (
+                <React.Fragment>
+                    <Container>
+                        <Typography
+                            variant="h4"
+                            color="secondary"
+                            sx={{
+                                textAlign: 'center',
+                                padding: '20px'
+                            }}
+                        >
+                            Machine Learning Based Analysis
+                        </Typography>
+                        <Stack direction="row" spacing={2}>
+                            {/* Bar Chart: Feature Importances */}
+                            <div
+                                className="d-flex"
+                                style={{
+                                    flexDirection: 'column',
+                                    gap: '8px 0',
+                                    margin: '0 auto'
+                                }}
+                            >
+                                <Typography variant="h6" color="secondary">
+                                    Feature Importances (Bar Chart)
+                                </Typography>
+                                <Chart
+                                    options={{
+                                        chart: { type: 'bar' },
+                                        xaxis: { categories: chartData.categories }
+                                    }}
+                                    series={[
+                                        {
+                                            name: 'Feature Importance',
+                                            data: chartData.featureImportance
+                                        }
+                                    ]}
+                                    type="bar"
+                                    width="400"
+                                />
+                            </div>
+
+                            {/* Line Chart: Feature Importances */}
+                            <div
+                                className="d-flex"
+                                style={{
+                                    flexDirection: 'column',
+                                    gap: '8px 0',
+                                    margin: '0 auto'
+                                }}
+                            >
+                                <Typography variant="h6" color="secondary">
+                                    Feature Importances (Line Chart)
+                                </Typography>
+                                <Chart
+                                    options={{
+                                        chart: { type: 'line' },
+                                        xaxis: { categories: chartData.categories }
+                                    }}
+                                    series={[
+                                        {
+                                            name: 'Feature Importance',
+                                            data: chartData.featureImportance
+                                        }
+                                    ]}
+                                    type="line"
+                                    width="400"
+                                />
+                            </div>
+
+                            {/* Scatter Plot: Feature Importances */}
+                            <div
+                                className="d-flex"
+                                style={{
+                                    flexDirection: 'column',
+                                    gap: '8px 0',
+                                    margin: '0 auto'
+                                }}
+                            >
+                                <Typography variant="h6" color="secondary">
+                                    Feature Importances (Scatter Plot)
+                                </Typography>
+                                <Chart
+                                    options={{
+                                        chart: { type: 'scatter' },
+                                        xaxis: { categories: chartData.categories }
+                                    }}
+                                    series={[
+                                        {
+                                            name: 'Feature Importance',
+                                            data: chartData.featureImportance
+                                        }
+                                    ]}
+                                    type="scatter"
+                                    width="400"
+                                />
+                            </div>
+
+                            {/* Heatmap: Feature Importances */}
+                            <div
+                                className="d-flex"
+                                style={{
+                                    flexDirection: 'column',
+                                    gap: '8px 0',
+                                    margin: '0 auto'
+                                }}
+                            >
+                                <Typography variant="h6" color="secondary">
+                                    Feature Importances (Heatmap)
+                                </Typography>
+                                <Chart
+                                    options={{
+                                        chart: { type: 'heatmap' },
+                                        xaxis: { categories: chartData.categories }
+                                    }}
+                                    series={[
+                                        {
+                                            name: 'Feature Importance',
+                                            data: [chartData.featureImportance]
+                                        }
+                                    ]}
+                                    type="heatmap"
+                                    width="400"
+                                />
+                            </div>
+
+                            {/* Pie Chart: Feature Importances */}
+                            <div
+                                className="d-flex"
+                                style={{
+                                    flexDirection: 'column',
+                                    gap: '8px 0',
+                                    margin: '0 auto'
+                                }}
+                            >
+                                <Typography variant="h6" color="secondary">
+                                    Feature Importances (Pie Chart)
+                                </Typography>
+                                <Chart
+                                    options={{
+                                        chart: { type: 'pie' }
+                                    }}
+                                    series={chartData.featureImportance}
+                                    type="pie"
+                                    width="400"
+                                />
+                            </div>
+                        </Stack>
+                    </Container>
+                </React.Fragment>
+            )}
+        </>
+    );
+};
+
+export default RfParams;

@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import LoaderAnimation from './utils/LoaderAnimation2';
 import Chart from 'react-apexcharts';
 import { Container, Stack, Typography } from '@mui/material';
 
-const ImageAnalytics = () => {
+const ImageAnalytics = ({ data }) => {
   const [state, setState] = React.useState({
     options: {
       chart: {
@@ -71,6 +71,27 @@ const ImageAnalytics = () => {
     ],
   })
   const [loading, SetLoading] = React.useState(false);
+  const [Data, setData] = React.useState({});
+
+  React.useEffect(() => {
+    try{
+      UpdateData();
+      SetLoading(false);
+    }
+    catch(err){
+      console.log(err);
+      SetLoading(true);
+    }
+  }, [])
+
+  const UpdateData = () => {
+    setData(data);
+  }
+
+  const getOutput = () => {
+    return Data;
+    
+  }
 
   React.useEffect(() => {
     try {

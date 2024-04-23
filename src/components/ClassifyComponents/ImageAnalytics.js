@@ -1,227 +1,153 @@
-import React from 'react'
-import LoaderAnimation from './utils/LoaderAnimation2';
+import React from 'react';
 import Chart from 'react-apexcharts';
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
-const ImageAnalytics = () => {
-  const [state, setState] = React.useState({
-    options: {
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "input img",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "std img",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      }
-    ]
-  }
-  );
+const ImageAnalytics = ({ data }) => {
+    // Extract backend data
+    const { mean_test, variance_test, skewness_test, kurtosis_test, contrast_test,
+            mean_std, variance_std, skewness_std, kurtosis_std, contrast_std } = data.image_analytics;
 
-  const [image, setImage] = React.useState({
-    options: {
-     
-      colors: ['#66DA26', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "test image flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "test img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
-  });
+    // Chart configurations
+    const chartOptions = {
+        meanComparison: {
+            options: {
+                chart: {
+                    type: 'bar'
+                },
+                xaxis: {
+                    categories: ['Mean (Test Image)', 'Mean (Standard Image)']
+                }
+            },
+            series: [
+                {
+                    name: 'Mean',
+                    data: [mean_test, mean_std]
+                }
+            ]
+        },
+        varianceComparison: {
+            options: {
+                chart: {
+                    type: 'bar'
+                },
+                xaxis: {
+                    categories: ['Variance (Test Image)', 'Variance (Standard Image)']
+                }
+            },
+            series: [
+                {
+                    name: 'Variance',
+                    data: [variance_test, variance_std]
+                }
+            ]
+        },
+        distributionMetrics: {
+            options: {
+                chart: {
+                    type: 'radar'
+                },
+                labels: ['Skewness (Test)', 'Kurtosis (Test)', 'Contrast (Test)',
+                         'Skewness (Standard)', 'Kurtosis (Standard)', 'Contrast (Standard)']
+            },
+            series: [
+                {
+                    name: 'Test Image',
+                    data: [skewness_test, kurtosis_test, contrast_test]
+                },
+                {
+                    name: 'Standard Image',
+                    data: [skewness_std, kurtosis_std, contrast_std]
+                }
+            ]
+        }
+    };
 
-  const [stdImage, setStdImage] = React.useState({
-    options: {
-    colors: ['#E91E63', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "std img flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "std. img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
-  })
-  const [loading, SetLoading] = React.useState(false);
+    // Return JSX for visualizations and table
+    return (
+        <div>
+            <Typography variant='h4' color='secondary' style={{ textAlign: 'center', padding: '20px' }}>
+                Image Analytics
+            </Typography>
+            
+            <Container>
+                {/* Mean Comparison */}
+                <Stack direction='row' justifyContent='center'>
+                    <div style={{ width: '50%' }}>
+                        <Typography variant='h6' color='secondary'>Mean Comparison</Typography>
+                        <Chart options={chartOptions.meanComparison.options}
+                               series={chartOptions.meanComparison.series}
+                               type='bar'
+                               width='400' />
+                    </div>
+                </Stack>
+                
+                {/* Variance Comparison */}
+                <Stack direction='row' justifyContent='center' style={{ marginTop: '20px' }}>
+                    <div style={{ width: '50%' }}>
+                        <Typography variant='h6' color='secondary'>Variance Comparison</Typography>
+                        <Chart options={chartOptions.varianceComparison.options}
+                               series={chartOptions.varianceComparison.series}
+                               type='bar'
+                               width='400' />
+                    </div>
+                </Stack>
 
-  React.useEffect(() => {
-    try {
-      // getting the message
-      // const url = "http://localhost:8000/api/classifier"
-      SetLoading(true);
-      // axios.get("http://localhost:8000/api/classifier")
-      
-    } catch (err) {
-      SetLoading(false);
-    }
-  }, [])
-  return (
-    <div>
-      {false ? (
-        <React.Fragment>
-          <LoaderAnimation />
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Typography variant='h4' color="secondary" sx={{
-            textAlign: "center",
-            paddingTop: "3rem",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px"
-          }}>
-            Statistical Analytics for the Given Image
-          </Typography>
-          <Container>
-            <Stack rowGap={2} direction="row">
-            <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Flattened Array
-                </Typography>
-                <Chart
-                  options={image.options}
-                  series={image.series}
-                  type="area"
-                  width="400"
-                />
-              </div>   
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Standard Image Flattened Array
-                </Typography>
-                <Chart
-                  options={stdImage.options}
-                  series={stdImage.series}
-                  type="area"
-                  width="400"
-                />
-              </div>   
-            </Stack>
-          </Container>
-          <Container sx={{
-            padding: "2rem 0"
-          }}>
-            <Stack direction="row">
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Mean
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="bar"
-                  width="400"
-                />
-              </div>                
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Variance
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="line"
-                  width="400"
-                />
-              </div>
-            </Stack>
+                {/* Distribution Metrics */}
+                <Stack direction='row' justifyContent='center' style={{ marginTop: '20px' }}>
+                    <div style={{ width: '80%' }}>
+                        <Typography variant='h6' color='secondary'>Distribution Metrics</Typography>
+                        <Chart options={chartOptions.distributionMetrics.options}
+                               series={chartOptions.distributionMetrics.series}
+                               type='radar'
+                               width='600' />
+                    </div>
+                </Stack>
 
-            <Stack direction="row">
-            <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Mean
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="bar"
-                  width="400"
-                />
-              </div>                
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Variance
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="area"
-                  width="400"
-                />
-              </div>
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Skewness
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="radar"
-                  width="400"
-                />
-              </div>
-            </Stack>
-          </Container>
-        </React.Fragment>
-      )}
-    </div>
-  )
-}
+                {/* Data Table */}
+                <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+                    <Typography variant='h6' color='secondary' style={{ textAlign: 'center', padding: '10px' }}>
+                        Data Summary
+                    </Typography>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Metric</TableCell>
+                                <TableCell align='right'>Test Image</TableCell>
+                                <TableCell align='right'>Standard Image</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>Mean</TableCell>
+                                <TableCell align='right'>{mean_test}</TableCell>
+                                <TableCell align='right'>{mean_std}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Variance</TableCell>
+                                <TableCell align='right'>{variance_test}</TableCell>
+                                <TableCell align='right'>{variance_std}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Skewness</TableCell>
+                                <TableCell align='right'>{skewness_test}</TableCell>
+                                <TableCell align='right'>{skewness_std}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Kurtosis</TableCell>
+                                <TableCell align='right'>{kurtosis_test}</TableCell>
+                                <TableCell align='right'>{kurtosis_std}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Contrast</TableCell>
+                                <TableCell align='right'>{contrast_test}</TableCell>
+                                <TableCell align='right'>{contrast_std}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Container>
+        </div>
+    );
+};
 
-export default ImageAnalytics
+export default ImageAnalytics;

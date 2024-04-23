@@ -16,7 +16,7 @@ const bull = (
     </Box>
   );
 
-const OutputCards = () => {
+const OutputCards = ({ data }) => {
     return (
         <main style={{
             minHeight: "100vh",

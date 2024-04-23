@@ -83,7 +83,7 @@ const ProjectReport = () => {
                 <p>
                     VGG stands for Visual Geometry Group; it is a standard deep Convolutional Neural Network (CNN) architecture with multiple layers. The “deep” refers to the number of layers with VGG-16 or VGG-19 consisting of 16 and 19 convolutional layers. The VGG architecture is the basis of ground-breaking object recognition models. Developed as a deep neural network, the VGGNet also surpasses baselines on many tasks and datasets beyond ImageNet. Moreover, it is now still one of the most popular image recognition architectures.
                 </p>
-                <img src={NN} class="img-thumbnail py-4" />
+                <img src={NN} class="img-thumbnail py-4" alt='neural network' />
             </div>
             <div id="item-3">
               <h4>Segmentation with UNET</h4>
@@ -108,7 +108,7 @@ const ProjectReport = () => {
               <p>
                 UNET is a deep convolutional neural network (CNN) architecture that is used for medical image segmentation.
               </p>
-              <img src={UNET} class="img-thumbnail" />
+              <img src={UNET} class="img-thumbnail" alt='unet architecture'/>
               <p>
                 The goal of semantic segmentation is the same as traditional image classification in remote sensing, which is usually conducted by applying traditional machine learning techniques such as random forest and maximum likelihood classifier. Like image classification, there are also two inputs for semantic segmentation.
               </p>

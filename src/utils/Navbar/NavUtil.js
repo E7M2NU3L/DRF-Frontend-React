@@ -1,7 +1,26 @@
+import axios from 'axios';
 import React from 'react'
 import { Link } from 'react-router-dom'
 
 const NavUtil = () => {
+  const [logout, setLogout] = React.useState(false);
+
+  React.useEffect(() => {
+  }, [])
+
+  const Logout = async() => {
+    try {
+      const endpoint = "http://localhost:8000/auth/logout_user"
+      const response = await axios.post(endpoint, {
+        headers: {
+          contentType: "application/json"
+        }
+      })
+      return response;
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return (
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container-fluid">
@@ -36,12 +55,19 @@ const NavUtil = () => {
               </li>
             </ul>
 
-            <form class="d-flex" role="search">
-              <Link class="btn btn-outline-success font-monospace" type="submit" to="/api/v1/users/logout">Logout</Link>
-            </form>
-            <form class="d-flex" role="search">
-              <Link class="btn btn-outline-success font-monospace" type="submit" to="/api/v1/users/login">Login</Link>
-            </form>
+            {false ? (
+              <React.Fragment>
+                <form class="d-flex" role="search">
+                  <Link class="btn btn-outline-success font-monospace" type="submit" to="/api/v1/users/logout">Logout</Link>
+                </form>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <form class="d-flex" role="search">
+                  <Link class="btn btn-outline-success font-monospace" type="submit" to="/api/v1/users/login">Login</Link>
+                </form>
+              </React.Fragment>
+            )}
           </div>
         </div>
       </nav>

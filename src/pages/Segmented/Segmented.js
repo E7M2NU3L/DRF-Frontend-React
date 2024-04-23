@@ -6,6 +6,8 @@ import ExtraParams from '../../components/SegmentComponents/ExtraParams'
 import RfParams from '../../components/SegmentComponents/RfParams'
 import axios from 'axios'
 import LoaderAnimation from '../../components/SegmentComponents/utils/LoaderAnimation2';
+import MaskParams from '../../components/SegmentComponents/MaskParams'
+import ImageParams from '../../components/SegmentComponents/ImageParams'
 
 const Segmented = () => {
   const [loader, setLoading] = React.useState(true);
@@ -54,6 +56,8 @@ const Segmented = () => {
           <ImageMoments />
           <ImageAnalytics />
           <ExtraParams />
+          <MaskParams />
+          <ImageParams />
           <RfParams />
         </main>
       )}

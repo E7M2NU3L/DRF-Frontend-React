@@ -34,24 +34,34 @@ const itemData = [
   },
 ];
 
-const ExtraParams = () => {
+const ExtraParams = ({ data }) => {
   const [options, setOptions] = React.useState("");
-  const [loading, SetLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const [Data, setData] = React.useState({});
 
   React.useEffect(() => {
-    try {
-      // getting the message
-      // const url = "http://localhost:8000/api/classifier"
-      SetLoading(true);
-      // axios.get("http://localhost:8000/api/classifier")
-      
-    } catch (err) {
-      SetLoading(false);
+    try{
+      UpdateData();
+      setLoading(false);
+    }
+    catch(err){
+      console.log(err);
+      setLoading(true);
     }
   }, [])
+
+  const UpdateData = () => {
+    setData(data);
+  }
+
+  const getOutput = () => {
+    return Data;
+    
+  }
   return (
     <>
-    {false ? (
+    {loading ? (
       <React.Fragment>
         <LoaderAnimation />
       </React.Fragment>

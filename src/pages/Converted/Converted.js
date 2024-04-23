@@ -1,57 +1,35 @@
-import React from 'react'
-import LoaderLayout from '../../components/ConvertComponents/LoaderLayout';
+import React, { useEffect, useState } from 'react';
 import OutputCards from '../../components/ConvertComponents/OutputCards';
 import PathDisplay from '../../components/ConvertComponents/PathDisplay';
 import axios from 'axios';
+import LoaderLayout from '../../components/ConvertComponents/utils/LoaderLayout';
 
-const Converted = () => {
-
-  const [loading, setLoading] = React.useState(true);
-  React.useEffect(() => {
-    try {  
-      const endpoint = "http://localhost:8000/api/converter/image_upload/"
-      const response = axios.get(endpoint, {
-        headers: {
-          'Content-Type':'multipart/form-data'
-        }
-      });
-      console.log(response);
-      refetch();
-      setLoading(false); 
-    } catch (error) {
-      console.log(error.message);
+const Converted = ({ data }) => {
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Since `data` is being passed from parent, handle the loading state based on `data` availability
+    if (data) {
       setLoading(false);
     }
-  }, [])
+  }, [data]); // Only run when `data` changes
 
-  const refetch = async() => {
-    try {  
-      const endpoint = "http://localhost:8000/api/converter/image_upload/"
-      const response = await axios.get(endpoint, {
-        headers: {
-          'Content-Type':'multipart/form-data'
-        }
-      });
-      console.log(response); 
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
+  // No need for redundant API calls here since `data` is already being passed from the parent component
 
   return (
     <>
-      {false ? (
+      {loading ? (
         <React.Fragment>
           <LoaderLayout />
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <OutputCards />
-          <PathDisplay />
+          <OutputCards data={data} /> {/* Assuming OutputCards accepts `data` as a prop */}
+          <PathDisplay data={data} />
         </React.Fragment>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Converted
+export default Converted;

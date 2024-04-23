@@ -1,8 +1,10 @@
 import { Container, Stack, Typography } from '@mui/material'
 import React from 'react'
 import Chart from 'react-apexcharts'
+import LoaderAnimation from '../ClassifyComponents/LoaderAnimation'
+import SnackBar from './utils/SnackBar'
 
-const RfParams = () => {
+const RfParams = ({ data }) => {
   const [options, setOptions] = React.useState({
     options: {
      
@@ -25,51 +27,90 @@ const RfParams = () => {
       },
     ],
   })
+
+    const [loading, SetLoading] = React.useState(true);
+    const [Data, setData] = React.useState({});
+
+    React.useEffect(() => {
+      try{
+        UpdateData();
+        SetLoading(false);
+      }
+      catch(err){
+        console.log(err);
+        SetLoading(true);
+      }
+    }, [])
+
+    const UpdateData = () => {
+      setData(data);
+    }
+
+    const getOutput = () => {
+      return Data;
+      
+    } 
   return (
     <>
-      <Container>
-      <Typography variant='h4' color="secondary" sx={{
-            textAlign: "center",
-            paddingTop: "20px",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px"
-          }}>
-            Machine Learning Based Analysis
-          </Typography>
-        <Stack direction="row" rowGap={2} >
-          <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-            <Typography variant='h6' color="secondary">
-              Feature Importtances of RF Classifier
-            </Typography>
-            <Chart
-              options={options.options}
-              series={options.series}
-              type="area"
-              width="400"
-            />
-          </div>
-          <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-            <Typography variant='h6' color="secondary">
-              Estimator Importances of RF Classifier
-            </Typography>
-            <Chart
-              options={options.options}
-              series={options.series}
-              type="area"
-              width="400"
-            />
-          </div>   
-        </Stack>
-      </Container>
+      {loading ? (
+        <React.Fragment>
+        <main className='d-flex' style={{
+            flexDirection: "column",
+            minHeight: "100vh",
+            justifyContent: "space-between",
+            alignItems: "center"
+        }}>
+            <LoaderAnimation />
+            <SnackBar />
+        </main>
+    </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <Container>
+            <Typography variant='h4' color="secondary" sx={{
+                  textAlign: "center",
+                  paddingTop: "20px",
+                  paddingBottom: "20px",
+                  paddingLeft: "20px",
+                  paddingRight: "20px"
+                }}>
+                  Machine Learning Based Analysis
+                </Typography>
+              <Stack direction="row" rowGap={2} >
+                <div className='d-flex' style={{
+                      flexDirection: "column",
+                      gap: "8px 0",
+                      margin: "0 auto"
+                    }}>
+                  <Typography variant='h6' color="secondary">
+                    Feature Importtances of RF Classifier
+                  </Typography>
+                  <Chart
+                    options={options.options}
+                    series={options.series}
+                    type="area"
+                    width="400"
+                  />
+                </div>
+                <div className='d-flex' style={{
+                      flexDirection: "column",
+                      gap: "8px 0",
+                      margin: "0 auto"
+                    }}>
+                  <Typography variant='h6' color="secondary">
+                    Estimator Importances of RF Classifier
+                  </Typography>
+                  <Chart
+                    options={options.options}
+                    series={options.series}
+                    type="area"
+                    width="400"
+                  />
+                </div>   
+              </Stack>
+            </Container>
+        </React.Fragment>
+      )}
     </>
   )
 }

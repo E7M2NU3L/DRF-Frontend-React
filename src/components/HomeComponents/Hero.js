@@ -17,7 +17,7 @@ const Hero = () => {
                 <h4 class="text-md font-light">
                     Welcome to Medical Image Segmenter, where cutting-edge technology meets medical expertise. Our platform harnesses the power of UNET and deep neural network classifiers to bring unprecedented accuracy and efficiency to medical image analysis.
                 </h4>
-                <a href="/segment" class="btn btn-dark border-0 mb-3">
+                <a href="/api/v1/tool/kidney-classify" class="btn btn-dark border-0 mb-3">
                         Explore Now
                 </a>           
             </div>

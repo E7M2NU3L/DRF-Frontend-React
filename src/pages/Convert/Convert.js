@@ -1,96 +1,113 @@
-import { TextField } from '@mui/material'
 import axios from 'axios';
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import Converted from '../Converted/Converted';
+import { useDropzone } from 'react-dropzone';
+import './main.css';
 
 const Convert = () => {
-  const [fileName, setFileName] = React.useState("");
-  const [File, SetFile] = React.useState(null);
+  const [fileName, setFileName] = useState('');
+  const [fileDescription, setFileDescription] = useState('');
+  const [file, setFile] = useState(null);
+  const [output, setOutput] = useState(null);
+  const [getData, setGetData] = useState(false);
+  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: 'image/*',
+    onDrop: (acceptedFiles) => {
+      setFile(acceptedFiles[0]);
+    },
+  });
 
-  const handleFileName = (e) => setFileName(e.target.value); 
-  const handleFile = (e) => SetFile(e.target.files[0]);
+  useEffect(() => {
+    if (output) {
+      setGetData(true);
+    }
+  }, [output]);
 
-  const handleSubmit = async(e) => {
-    e.preventDefaults();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Corrected from e.preventDefaults();
 
-    const form = new FormData();
-    form.append("file", File);
-    form.append("name", fileName);
+    const formData = new FormData();
+    formData.append('image_nifti', file);
+    formData.append('image_name', fileName);
+    formData.append('image_description', fileDescription);
 
-    const endpoint = "http://localhost:8000/api/converter/image_upload/"
+    const endpoint = 'http://localhost:8000/api/converter/image_upload/';
     try {
-      const response = await axios.post(
-        endpoint, {
-          file: File,
-          name: fileName
-        },{
-          headers: {
-            'Content-Type':'multipart/form-data'
-          }
-        }
-      )
+      const response = await axios.post(endpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const data = response.data;
       console.log(response);
+      setOutput(data);
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   return (
-    <main class="container-fluid" style={{
-        margin: 0,
-        padding: "2rem 0",
-        minHeight: '100vh',
-        maxHeight: '100%',
-        width: '100vw',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: "#fefedf",
-        backgroundSize: 'cover',
-    }}>
-    <div class="card" style={{
-      width: "400px",
-      padding: "30px 20px",
-      background: "rgba(0,0,0,0.5)",
-      backgroundSize: 'cover',
-      color: "#fff",
-      height: "100%",
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-            <h2>
-                Convert Nifti to Dicom and Jpg
-            </h2>
-            <form method="post" enctype="multipart/form-data" autocomplete="off" className='' style={{
-                padding: "30px 20px",
-                color: "#fff",
-                height: "100%",
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-              <div class="mb-3"></div>
+    <>
+      {getData ? (
+        <Converted data={output} />
+      ) : (
+        <React.Fragment>
+          <main
+            className="container-fluid d-flex justify-content-center align-items-center"
+            style={{ margin: 0, padding: '2rem 0', minHeight: '100vh', background: '#fefedf' }}
+          >
+            <div className="card" style={{ width: '400px', padding: '30px 20px' }}>
+              <h2>Converter API</h2>
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <div className="mb-3"></div>
 
-              <TextField id="outlined-basic" label="File Name" variant="filled" color= 'secondary' sx={{
-                borderRadius: 4,
-              }} value={fileName} onChange={setFileName} />
-              <span class='form-text text-muted'><small class='text-white'>Required</small></span>
-              <br />
-              <input type='file' name='classify-image' value={File} onChange={SetFile} className='d-flex w-100 h-100 py-2 justify-content-center align-items-center' />
-              <span class='form-text text-muted'><small class='text-white'>Required</small></span><br /><hr /><h3>Points to Notice</h3><br /><ul><li>The Dicom file must be uncorrupted, proper image acquisition</li><br /><li>The image file must be less than 2 MB</li><li>Click the submit button to upload</li><li>Keep a unique name for the Image or File e.g. patient_00_123 etc.,</li></ul>
-              <br />
-                
-              <Link type="submit" to="/api/v1/tool/kidney-converted" className="border-0 rounded-md shadow-sm btn btn-success">
-                Validate
-              </Link>
-            </form>
-    </div>
-  </main>
-  )
-}
+                <input
+                  type="text"
+                  placeholder="Name the File"
+                  className="cool-input"
+                  value={fileName}
+                  onChange={(e) => setFileName(e.target.value)}
+                />
+                <span className="form-text text-muted"><small>Required</small></span><br />
 
-export default Convert
+                <div className="mb-3"></div>
+                <input
+                  type="text"
+                  placeholder="Proper Description"
+                  className="cool-input"
+                  value={fileDescription}
+                  onChange={(e) => setFileDescription(e.target.value)}
+                />
+
+                <div className="cool-file-upload" {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p>Drop the files here...</p>
+                  ) : (
+                    <p>Drag 'n' drop some files here, or click to select files</p>
+                  )}
+                </div>
+                <span className="form-text text-muted"><small>Required</small></span><br />
+
+                <div className="mt-2 mb-3">
+                  <h5>Rules To Remember</h5>
+                  <p>The file must be named with unique integers at the end; description must be around 100 characters.</p>
+                  <p>The file must be a .nii.gz file.</p>
+                  <p>Don't press the validate button multiple times; it will bring down the server.</p>
+                </div>
+
+                <button type="submit" className="cool-button">
+                  Validate
+                </button>
+              </form>
+            </div>
+          </main>
+        </React.Fragment>
+      )}
+    </>
+  );
+};
+
+export default Convert;

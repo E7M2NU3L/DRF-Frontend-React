@@ -3,7 +3,7 @@ import LoaderAnimation from './utils/LoaderAnimation2';
 import { Container, Stack, Typography } from '@mui/material';
 import Chart from 'react-apexcharts'
 
-const ImageMoments = () => {
+const ImageMoments = ({ data }) => {
 
   const [options, setOptions] = React.useState({
     options: {
@@ -29,17 +29,26 @@ const ImageMoments = () => {
   });
   const [loading, SetLoading] = React.useState(false);
 
+  const [Data, setData] = React.useState({});
+
   React.useEffect(() => {
-    try {
-      // getting the message
-      // const url = "http://localhost:8000/api/classifier"
-      SetLoading(true);
-      // axios.get("http://localhost:8000/api/classifier")
-      
-    } catch (err) {
+    try{
+      UpdateData();
       SetLoading(false);
     }
+    catch(err){
+      console.log(err);
+      SetLoading(true);
+    }
   }, [])
+
+  const UpdateData = () => {
+    setData(data);
+  }
+
+  const getOutput = () => {
+    return Data; 
+  }
 
   return (
     <div>
