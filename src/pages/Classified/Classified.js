@@ -50,13 +50,17 @@ const Classified = ({ data }) => {
             const parsedData = data;
 
             // Extract data for each child component
-            const output = parsedData.output[0];
+            const output_classified = parsedData.output[0];
+            const image_analytics = parsedData.output[1];
+            const random_forest_analytics = parsedData.output[2];
+            const image_moments = parsedData.output[3];
+            const extra_params = parsedData.output[4];
             
-            setOutputClassified(output.output_classified);
-            setImageAnalytics(output.image_analytics);
-            setRfParams(output.random_forest_analytics);
-            setImageMoments(output.image_moments);
-            setExtraParams(output.extra_params);
+            setOutputClassified(output_classified);
+            setImageAnalytics(image_analytics);
+            setRfParams(random_forest_analytics);
+            setImageMoments(image_moments);
+            setExtraParams(extra_params);
             
             // Parse the image array from the "data" field (assuming data is in JSON format)
             const imageDataString = parsedData.data;

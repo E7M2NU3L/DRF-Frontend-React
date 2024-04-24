@@ -15,7 +15,7 @@ const Segmented = ({ data, isLoading }) => {
     const sobelData = parseInstance[1];
     const statsData = parseInstance[2];
     const momentsData = parseInstance[3];
-    const ImageParams = parseInstance[5];
+    const imageParams = parseInstance[5];
     const maskStatsData = parseInstance[6];
 
     const rf_parans_obj = parseInstance[4][0];
@@ -33,7 +33,7 @@ const Segmented = ({ data, isLoading }) => {
         'sobelData': sobelData,
         'statsData': statsData,
         'momentsData': momentsData,
-        'ImageParams': ImageParams,
+        'ImageParams': imageParams,
         'MaskParams': maskStatsData,
         'rf_params': rf_params,
         'input': inputData
@@ -50,7 +50,7 @@ const Segmented = ({ data, isLoading }) => {
                     <ImageAnalytics data={statsData} />
                     <ExtraParams data={sobelData} />
                     <MaskParams data={maskStatsData} />
-                    <ImageParams data={ImageParams} />
+                    <ImageParams data={imageParams} />
                     <RfParams data={rf_params} />
                 </main>
             )}
