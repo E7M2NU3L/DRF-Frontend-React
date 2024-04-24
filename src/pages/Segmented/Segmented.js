@@ -8,32 +8,50 @@ import LoaderAnimation from '../../components/SegmentComponents/utils/LoaderAnim
 import MaskParams from '../../components/SegmentComponents/MaskParams';
 import ImageParams from '../../components/SegmentComponents/ImageParams';
 
-const Segmented = ({ data }) => {
-    const [loading, setLoading] = React.useState(true);
+const Segmented = ({ data, isLoading }) => {
+    // Extract each data point from parse_instance array
+    const parseInstance = data.data;
+    const dlData = parseInstance[0];
+    const sobelData = parseInstance[1];
+    const statsData = parseInstance[2];
+    const momentsData = parseInstance[3];
+    const ImageParams = parseInstance[5];
+    const maskStatsData = parseInstance[6];
 
-    // Parsing data from props
-    React.useEffect(() => {
-        if (data) {
-            setLoading(false);
-        } else {
-            setLoading(true);
-        }
-    }, [data]);
-
-    // Rendering the appropriate components based on the data
+    const rf_parans_obj = parseInstance[4][0];
+    const rf_params = rf_parans_obj.feature_importance;
+    
+    // Use input_data
+    const inputData = data.input_data;
+    
+    // Display message
+    const message = data.message;
+    
+    console.log("The Data has been segregated");
+    const obj_data = {
+        'segments': dlData,
+        'sobelData': sobelData,
+        'statsData': statsData,
+        'momentsData': momentsData,
+        'ImageParams': ImageParams,
+        'MaskParams': maskStatsData,
+        'rf_params': rf_params,
+        'input': inputData
+    }
+    console.log(obj_data);
     return (
         <>
-            {loading ? (
+            {isLoading ? (
                 <LoaderAnimation />
             ) : (
                 <main style={{ backgroundColor: "#fefedf" }}>
-                    <SegmentedOutput data={data.segments} />
-                    <ImageMoments data={data.image_moments} />
-                    <ImageAnalytics data={data.image_analytics_parans} />
-                    <ExtraParams data={data.image_extra_parans} />
-                    <MaskParams data={data.mask_stats} />
-                    <ImageParams data={data.image_stats} />
-                    <RfParams data={data.random_forest_analytics} />
+                    <SegmentedOutput data={dlData} input={inputData} message={message} />
+                    <ImageMoments data={momentsData} />
+                    <ImageAnalytics data={statsData} />
+                    <ExtraParams data={sobelData} />
+                    <MaskParams data={maskStatsData} />
+                    <ImageParams data={ImageParams} />
+                    <RfParams data={rf_params} />
                 </main>
             )}
         </>

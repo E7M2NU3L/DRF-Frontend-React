@@ -34,7 +34,7 @@ const ClassifiedOutput = ({ data, base64Image }) => {
                                 Predictions
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                The given input image has been classified as <Typography variant="h5" color="lightseagreen">"Tumor"</Typography>.
+                                The given input image has been classified as <Typography variant="h5" color="lightseagreen">{data}</Typography>.
                                 <Typography variant="p" style={{ paddingTop: "10px" }}>
                                     Used Algorithms:
                                 </Typography>

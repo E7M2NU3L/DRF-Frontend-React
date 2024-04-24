@@ -1,118 +1,128 @@
-import { Container, Stack, Typography } from '@mui/material'
-import React from 'react'
-import Chart from 'react-apexcharts'
-import LoaderAnimation from '../ClassifyComponents/LoaderAnimation'
-import SnackBar from './utils/SnackBar'
+import React from 'react';
+import { Container, Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import Chart from 'react-apexcharts';
+import LoaderAnimation from '../ClassifyComponents/LoaderAnimation';
+import SnackBar from './utils/SnackBar';
 
 const RfParams = ({ data }) => {
-  const [options, setOptions] = React.useState({
-    options: {
-     
-      colors: ['#66DA26', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "test image flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "test img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
-  })
+    const [loading, setLoading] = React.useState(true);
+    const [featureImportance, setFeatureImportance] = React.useState([]);
+    const [chartOptions, setChartOptions] = React.useState({
+        chart: {
+            id: 'feature-importance-chart',
+            type: 'bar',
+            toolbar: {
+                show: true
+            }
+        },
+        colors: ['#66DA26'],
+        xaxis: {
+            categories: [] // Will be populated with feature indices
+        },
+        plotOptions: {
+            bar: {
+                distributed: true,
+            }
+        }
+    });
+    const [chartSeries, setChartSeries] = React.useState([
+        {
+            name: 'Feature Importance',
+            data: [] // Will be populated with feature importance data
+        }
+    ]);
 
-    const [loading, SetLoading] = React.useState(true);
-    const [Data, setData] = React.useState({});
-
+    // Parse data and update state
     React.useEffect(() => {
-      try{
-        UpdateData();
-        SetLoading(false);
-      }
-      catch(err){
-        console.log(err);
-        SetLoading(true);
-      }
-    }, [])
+        if (data && data.feature_importance) {
+            const featureImportanceArray = data.feature_importance;
+            
+            // Populate chart options and series
+            setChartOptions((prevOptions) => ({
+                ...prevOptions,
+                xaxis: {
+                    categories: Array.from({ length: featureImportanceArray.length }, (_, index) => `Feature ${index + 1}`)
+                }
+            }));
+            setChartSeries([
+                {
+                    name: 'Feature Importance',
+                    data: featureImportanceArray
+                }
+            ]);
 
-    const UpdateData = () => {
-      setData(data);
-    }
+            // Update feature importance data
+            setFeatureImportance(featureImportanceArray);
+            setLoading(false);
+        }
+    }, [data]);
 
-    const getOutput = () => {
-      return Data;
-      
-    } 
-  return (
-    <>
-      {loading ? (
-        <React.Fragment>
-        <main className='d-flex' style={{
-            flexDirection: "column",
-            minHeight: "100vh",
-            justifyContent: "space-between",
-            alignItems: "center"
-        }}>
-            <LoaderAnimation />
-            <SnackBar />
-        </main>
-    </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Container>
-            <Typography variant='h4' color="secondary" sx={{
-                  textAlign: "center",
-                  paddingTop: "20px",
-                  paddingBottom: "20px",
-                  paddingLeft: "20px",
-                  paddingRight: "20px"
-                }}>
-                  Machine Learning Based Analysis
-                </Typography>
-              <Stack direction="row" rowGap={2} >
-                <div className='d-flex' style={{
-                      flexDirection: "column",
-                      gap: "8px 0",
-                      margin: "0 auto"
+    return (
+        <>
+            {loading ? (
+                <React.Fragment>
+                    <main className='d-flex' style={{
+                        flexDirection: "column",
+                        minHeight: "100vh",
+                        justifyContent: "space-between",
+                        alignItems: "center"
                     }}>
-                  <Typography variant='h6' color="secondary">
-                    Feature Importtances of RF Classifier
-                  </Typography>
-                  <Chart
-                    options={options.options}
-                    series={options.series}
-                    type="area"
-                    width="400"
-                  />
-                </div>
-                <div className='d-flex' style={{
-                      flexDirection: "column",
-                      gap: "8px 0",
-                      margin: "0 auto"
-                    }}>
-                  <Typography variant='h6' color="secondary">
-                    Estimator Importances of RF Classifier
-                  </Typography>
-                  <Chart
-                    options={options.options}
-                    series={options.series}
-                    type="area"
-                    width="400"
-                  />
-                </div>   
-              </Stack>
-            </Container>
-        </React.Fragment>
-      )}
-    </>
-  )
-}
+                        <LoaderAnimation />
+                        <SnackBar />
+                    </main>
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    <Container>
+                        <Typography variant='h4' color="secondary" sx={{
+                            textAlign: "center",
+                            paddingTop: "20px",
+                            paddingBottom: "20px",
+                            paddingLeft: "20px",
+                            paddingRight: "20px"
+                        }}>
+                            Machine Learning Based Analysis
+                        </Typography>
 
-export default RfParams
+                        <Stack direction="row" spacing={3} justifyContent="center">
+                            {/* Feature Importance Bar Chart */}
+                            <div>
+                                <Typography variant='h6' color="secondary" align="center">
+                                    Feature Importances of RF Classifier
+                                </Typography>
+                                <Chart
+                                    options={chartOptions}
+                                    series={chartSeries}
+                                    type="bar"
+                                    width={400}
+                                />
+                            </div>
+                            {/* Feature Importance Table */}
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Feature Index</TableCell>
+                                            <TableCell>Importance</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {featureImportance.map((importance, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{`Feature ${index + 1}`}</TableCell>
+                                                <TableCell>{importance.toFixed(4)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Stack>
+
+                    </Container>
+                </React.Fragment>
+            )}
+        </>
+    );
+};
+
+export default RfParams;

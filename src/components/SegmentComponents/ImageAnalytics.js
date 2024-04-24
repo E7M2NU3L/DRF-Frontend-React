@@ -1,248 +1,86 @@
-import React, { useState } from 'react'
-import LoaderAnimation from './utils/LoaderAnimation2';
-import Chart from 'react-apexcharts';
+import React from 'react';
 import { Container, Stack, Typography } from '@mui/material';
+import Chart from 'react-apexcharts';
 
-const ImageAnalytics = ({ data }) => {
-  const [state, setState] = React.useState({
+const ImageMomentsVisualization = ({ data }) => {
+  // Initialize state for chart options and series data
+  const [chartOptions, setChartOptions] = React.useState({
     options: {
       chart: {
-        id: "basic-bar"
+        id: "moments-chart",
+        type: 'radar',  // Set the default chart type to radar
       },
       xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
+        categories: ['m00', 'm10', 'm01', 'm20', 'm11', 'm02', 'm30', 'm21', 'm12', 'm03'],
+      },
+      colors: ['#66DA26', '#FF9800'],
     },
     series: [
       {
-        name: "input img",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "std img",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
+        name: "Moments",
+        data: [
+          data.m00,
+          data.m10,
+          data.m01,
+          data.m20,
+          data.m11,
+          data.m02,
+          data.m30,
+          data.m21,
+          data.m12,
+          data.m03
+        ]
       }
     ]
-  }
-  );
-
-  const [image, setImage] = React.useState({
-    options: {
-     
-      colors: ['#66DA26', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "test image flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "test img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
   });
 
-  const [stdImage, setStdImage] = React.useState({
-    options: {
-    colors: ['#E91E63', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "std img flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "std. img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
-  })
-  const [loading, SetLoading] = React.useState(false);
-  const [Data, setData] = React.useState({});
-
-  React.useEffect(() => {
-    try{
-      UpdateData();
-      SetLoading(false);
-    }
-    catch(err){
-      console.log(err);
-      SetLoading(true);
-    }
-  }, [])
-
-  const UpdateData = () => {
-    setData(data);
-  }
-
-  const getOutput = () => {
-    return Data;
-    
-  }
-
-  React.useEffect(() => {
-    try {
-      // getting the message
-      // const url = "http://localhost:8000/api/classifier"
-      SetLoading(true);
-      // axios.get("http://localhost:8000/api/classifier")
-      
-    } catch (err) {
-      SetLoading(false);
-    }
-  }, [])
   return (
-    <div>
-      {false ? (
-        <React.Fragment>
-          <LoaderAnimation />
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Typography variant='h4' color="secondary" sx={{
-            textAlign: "center",
-            paddingTop: "3rem",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px"
-          }}>
-            Statistical Analytics for the Given Image
+    <Container>
+      <Typography variant="h4" color="secondary" sx={{ textAlign: 'center', paddingTop: '20px', paddingBottom: '20px' }}>
+        Image Moments Visualization
+      </Typography>
+      <Stack direction="row" spacing={2} justifyContent="center">
+        {/* Radar plot for moments data */}
+        <div style={{ width: '400px' }}>
+          <Typography variant="h6" color="secondary" sx={{ textAlign: 'center' }}>
+            Radar Plot
           </Typography>
-          <Container>
-            <Stack rowGap={2} direction="row">
-            <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Flattened Array
-                </Typography>
-                <Chart
-                  options={image.options}
-                  series={image.series}
-                  type="area"
-                  width="400"
-                />
-              </div>   
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Standard Image Flattened Array
-                </Typography>
-                <Chart
-                  options={stdImage.options}
-                  series={stdImage.series}
-                  type="area"
-                  width="400"
-                />
-              </div>   
-            </Stack>
-          </Container>
-          <Container sx={{
-            padding: "2rem 0"
-          }}>
-            <Stack direction="row">
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Mean
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="bar"
-                  width="400"
-                />
-              </div>                
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Variance
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="line"
-                  width="400"
-                />
-              </div>
-            </Stack>
+          <Chart
+            options={{ ...chartOptions.options, chart: { type: 'radar' } }}
+            series={chartOptions.series}
+            type="radar"
+            width="400"
+          />
+        </div>
 
-            <Stack direction="row">
-            <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Mean
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="bar"
-                  width="400"
-                />
-              </div>                
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Variance
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="area"
-                  width="400"
-                />
-              </div>
-              <div className='d-flex' style={{
-                flexDirection: "column",
-                gap: "8px 0",
-                margin: "0 auto"
-              }}>
-                <Typography variant='h6' color="secondary">
-                  Input Image Skewness
-                </Typography>
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="radar"
-                  width="400"
-                />
-              </div>
-            </Stack>
-          </Container>
-        </React.Fragment>
-      )}
-    </div>
-  )
-}
+        {/* Heatmap for moments data */}
+        <div style={{ width: '400px' }}>
+          <Typography variant="h6" color="secondary" sx={{ textAlign: 'center' }}>
+            Heatmap
+          </Typography>
+          <Chart
+            options={{ ...chartOptions.options, chart: { type: 'heatmap' }, plotOptions: { heatmap: { radius: 0 } } }}
+            series={chartOptions.series}
+            type="heatmap"
+            width="400"
+          />
+        </div>
 
-export default ImageAnalytics
+        {/* Correlation map for moments data */}
+        <div style={{ width: '400px' }}>
+          <Typography variant="h6" color="secondary" sx={{ textAlign: 'center' }}>
+            Correlation Map
+          </Typography>
+          <Chart
+            options={{ ...chartOptions.options, chart: { type: 'scatter' } }}
+            series={chartOptions.series}
+            type="scatter"
+            width="400"
+          />
+        </div>
+      </Stack>
+    </Container>
+  );
+};
+
+export default ImageMomentsVisualization;

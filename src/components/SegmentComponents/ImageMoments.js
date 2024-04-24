@@ -1,127 +1,245 @@
-import React from 'react'
+import React from 'react';
+import { Container, Stack, Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
+import Chart from 'react-apexcharts';
 import LoaderAnimation from './utils/LoaderAnimation2';
-import { Container, Stack, Typography } from '@mui/material';
-import Chart from 'react-apexcharts'
 
 const ImageMoments = ({ data }) => {
 
-  const [options, setOptions] = React.useState({
-    options: {
-     
-      colors: ['#66DA26', '#FF9800'],
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-      }
-    },
-    series: [
-      {
-        name: "test image flattened",
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      },
-      {
-        name: "test img moments",
-        data: [30, 40, 45, 50, 49, 60, 70, 91].reverse()
-      },
-    ],
-  });
-  const [loading, SetLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
+    const [momentsData, setMomentsData] = React.useState({});
 
-  const [Data, setData] = React.useState({});
+    React.useEffect(() => {
+        try {
+            updateData();
+            setLoading(false);
+        } catch (err) {
+            console.log(err);
+            setLoading(true);
+        }
+    }, [data]);
 
-  React.useEffect(() => {
-    try{
-      UpdateData();
-      SetLoading(false);
-    }
-    catch(err){
-      console.log(err);
-      SetLoading(true);
-    }
-  }, [])
+    const updateData = () => {
+        setMomentsData(data);
+    };
 
-  const UpdateData = () => {
-    setData(data);
-  }
+    const options = {
+        barChart: {
+            chart: {
+                type: 'bar'
+            },
+            xaxis: {
+                categories: ['Mean', 'Variance', 'Skewness', 'Kurtosis', 'Contrast']
+            }
+        },
+        correlationScatterPlot: {
+            chart: {
+                type: 'scatter',
+                zoom: {
+                    enabled: true,
+                    type: 'xy'
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Test Metrics'
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'Standard Metrics'
+                }
+            }
+        },
+        heatmap: {
+            chart: {
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: false
+            }
+        }
+    };
 
-  const getOutput = () => {
-    return Data; 
-  }
+    const series = {
+        barChart: [
+            {
+                name: 'Test Data',
+                data: [
+                    momentsData.test_mean,
+                    momentsData.test_variance,
+                    momentsData.test_skewness,
+                    momentsData.test_kurtosis,
+                    momentsData.test_contrast
+                ]
+            },
+            {
+                name: 'Standard Data',
+                data: [
+                    momentsData.std_mean,
+                    momentsData.std_variance,
+                    momentsData.std_skewness,
+                    momentsData.std_kurtosis,
+                    momentsData.std_contrast
+                ]
+            }
+        ],
+        correlationScatterPlot: [
+            {
+                name: 'Correlation',
+                data: [
+                    { x: momentsData.test_mean, y: momentsData.std_mean },
+                    { x: momentsData.test_variance, y: momentsData.std_variance },
+                    { x: momentsData.test_skewness, y: momentsData.std_skewness },
+                    { x: momentsData.test_kurtosis, y: momentsData.std_kurtosis },
+                    { x: momentsData.test_contrast, y: momentsData.std_contrast }
+                ]
+            }
+        ],
+        heatmap: [
+            {
+                data: [
+                    { x: 'Mean', y: 'Test', value: momentsData.test_mean },
+                    { x: 'Mean', y: 'Standard', value: momentsData.std_mean },
+                    { x: 'Variance', y: 'Test', value: momentsData.test_variance },
+                    { x: 'Variance', y: 'Standard', value: momentsData.std_variance },
+                    { x: 'Skewness', y: 'Test', value: momentsData.test_skewness },
+                    { x: 'Skewness', y: 'Standard', value: momentsData.std_skewness },
+                    { x: 'Kurtosis', y: 'Test', value: momentsData.test_kurtosis },
+                    { x: 'Kurtosis', y: 'Standard', value: momentsData.std_kurtosis },
+                    { x: 'Contrast', y: 'Test', value: momentsData.test_contrast },
+                    { x: 'Contrast', y: 'Standard', value: momentsData.std_contrast }
+                ]
+            }
+        ]
+    };
 
-  return (
-    <div>
-      {false ? (
-        <React.Fragment>
-          <LoaderAnimation />
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Typography variant='h4' color="secondary" sx={{
-            textAlign: "center",
-            paddingTop: "20px",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px"
-          }}>
-            Image Moments
-          </Typography>
-          <Container >
-            <Stack direction="row" rowGap={2}>
-            <div className='d-flex' style={{
-                  flexDirection: "column",
-                  gap: "8px 0",
-                  margin: "0 auto"
-                }}>
-                  <Typography variant='h6' color="secondary">
-                    Image Moments as a Statistics
-                  </Typography>
-                  <Chart
-                    options={options.options}
-                    series={options.series}
-                    type="area"
-                    width="400"
-                  />
-                </div>
+    return (
+        <div>
+            {loading ? (
+                <React.Fragment>
+                    <LoaderAnimation />
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    {/* Display Image Moments title */}
+                    <Typography variant='h4' color='secondary' sx={{
+                        textAlign: 'center',
+                        paddingTop: '20px',
+                        paddingBottom: '20px',
+                        paddingLeft: '20px',
+                        paddingRight: '20px'
+                    }}>
+                        Image Moments
+                    </Typography>
 
-                <div className='d-flex' style={{
-                  flexDirection: "column",
-                  gap: "8px 0",
-                  margin: "0 auto"
-                }}>
-                  <Typography variant='h6' color="secondary">
-                    Image Moments as a Correlation map
-                  </Typography>
-                  <Chart
-                    options={options.options}
-                    series={options.series}
-                    type="scatter"
-                    width="400"
-                  />
-                </div>
+                    {/* Container for different visualizations */}
+                    <Container>
+                        <Stack direction='row' rowGap={2}>
+                            {/* Table displaying image moments data */}
+                            <div className='d-flex' style={{
+                                flexDirection: 'column',
+                                gap: '8px 0',
+                                margin: '0 auto'
+                            }}>
+                                <Typography variant='h6' color='secondary'>
+                                    Image Moments Statistics
+                                </Typography>
+                                <TableContainer component={Paper}>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Metric</TableCell>
+                                                <TableCell>Test Data</TableCell>
+                                                <TableCell>Standard Data</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell>Mean</TableCell>
+                                                <TableCell>{momentsData.test_mean}</TableCell>
+                                                <TableCell>{momentsData.std_mean}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>Variance</TableCell>
+                                                <TableCell>{momentsData.test_variance}</TableCell>
+                                                <TableCell>{momentsData.std_variance}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>Skewness</TableCell>
+                                                <TableCell>{momentsData.test_skewness}</TableCell>
+                                                <TableCell>{momentsData.std_skewness}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>Kurtosis</TableCell>
+                                                <TableCell>{momentsData.test_kurtosis}</TableCell>
+                                                <TableCell>{momentsData.std_kurtosis}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>Contrast</TableCell>
+                                                <TableCell>{momentsData.test_contrast}</TableCell>
+                                                <TableCell>{momentsData.std_contrast}</TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
 
-                <div className='d-flex' style={{
-                  flexDirection: "column",
-                  gap: "8px 0",
-                  margin: "0 auto"
-                }}>
-                  <Typography variant='h6' color="secondary">
-                    Image Moments as a Heatmap
-                  </Typography>
-                  <Chart
-                    options={options.options}
-                    series={options.series}
-                    type="heatmap"
-                    width="400"
-                  />
-                </div>   
-            </Stack>
-          </Container>
-        </React.Fragment>
-      )}
-    </div>
-  )
-}
+                            {/* Bar chart to visualize mean, variance, skewness, kurtosis, and contrast */}
+                            <div className='d-flex' style={{
+                                flexDirection: 'column',
+                                gap: '8px 0',
+                                margin: '0 auto'
+                            }}>
+                                <Typography variant='h6' color='secondary'>
+                                    Image Moments Bar Chart
+                                </Typography>
+                                <Chart
+                                    options={options.barChart}
+                                    series={series.barChart}
+                                    type='bar'
+                                    width='400'
+                                />
+                            </div>
 
-export default ImageMoments
+                            {/* Scatter plot to visualize correlation between test and standard data */}
+                            <div className='d-flex' style={{
+                                flexDirection: 'column',
+                                gap: '8px 0',
+                                margin: '0 auto'
+                            }}>
+                                <Typography variant='h6' color='secondary'>
+                                    Image Moments Correlation Scatter Plot
+                                </Typography>
+                                <Chart
+                                    options={options.correlationScatterPlot}
+                                    series={series.correlationScatterPlot}
+                                    type='scatter'
+                                    width='400'
+                                />
+                            </div>
+
+                            {/* Heatmap to visualize the distribution of different metrics */}
+                            <div className='d-flex' style={{
+                                flexDirection: 'column',
+                                gap: '8px 0',
+                                margin: '0 auto'
+                            }}>
+                                <Typography variant='h6' color='secondary'>
+                                    Image Moments Heatmap
+                                </Typography>
+                                <Chart
+                                    options={options.heatmap}
+                                    series={series.heatmap}
+                                    type='heatmap'
+                                    width='400'
+                                />
+                            </div>
+                        </Stack>
+                    </Container>
+                </React.Fragment>
+            )}
+        </div>
+    );
+};
+
+export default ImageMoments;
